@@ -7,7 +7,7 @@ class CreatePhotos < ActiveRecord::Migration
       t.string    :thumb_source_url
       t.string    :medium_source_url
       t.string    :fullsize_source_url
-      t.boolean   :active, :default => true
+      t.boolean   :active,              :default => true
       t.datetime  :taken_at
       t.datetime  :flickr_updated_at
       t.timestamps

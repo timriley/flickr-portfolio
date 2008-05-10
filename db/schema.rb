@@ -13,7 +13,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table "photos", :force => true do |t|
     t.string   "title"
-    t.string   "description"
+    t.text     "description"
     t.string   "flickr_id"
     t.string   "thumb_source_url"
     t.string   "medium_source_url"
