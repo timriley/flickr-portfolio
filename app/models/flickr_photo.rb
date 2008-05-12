@@ -1,7 +1,5 @@
 class FlickrPhoto
   
-  attr_accessor :id
-  
   def initialize(id)
     @id = id
   end
@@ -15,6 +13,9 @@ class FlickrPhoto
     @attributes = attrs
   end
   
+  def id
+    @id
+  end
   def title
     attributes[:title]
   end
@@ -24,8 +25,11 @@ class FlickrPhoto
   def taken_at
     attributes[:taken_at]
   end
-  def updated_at
+  def flickr_updated_at
     attributes[:updated_at]
+  end
+  def updated_at
+    flickr_updated_at
   end
   def thumb_source_url
     attributes[:thumb_source_url]

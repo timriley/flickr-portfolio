@@ -7,19 +7,32 @@ module PhotoSpecHelper
      :title => "Last time's the charm",
      :thumb_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
      :medium_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
-     :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg',
+     :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
     }
   end
-  def valid_flickr_photo_attributes
+  def all_photo_attributes
+    {
+      :description => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
+      :taken_at => 100.days.ago,
+      :flickr_updated_at => 99.days.ago
+    }.merge(valid_photo_attributes)
+  end
+  def flickr_photo_attributes
     {
       :title => 'Hey',
       :description => 'Some people',
       :taken_at => 10.days.ago,
-      :updated_at => 9.days.ago,
-      :thumb_source_url => 'http://thumb.com',
-      :medium_source_url => 'http://medium.com',
-      :fullsize_source_url => 'http://full.com'
+      :flickr_updated_at => 9.days.ago,
+      :thumb_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
+      :medium_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
+      :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
     }
+  end
+  def stub_attributes(obj, attrs)
+    obj.stub!(:attributes).and_return(attrs)
+    attrs.each_pair do |key,val|
+      obj.stub!(key).and_return(val)
+    end
   end
 end
 
@@ -36,8 +49,8 @@ describe "a photo matching a flickr photo", :shared => true do
     @photo.description.should == @flickr_photo.description
   end
   
-  it "should have an updated_at timestamp matching the flickr photo's updated_at" do
-    @photo.flickr_updated_at.should == @flickr_photo.updated_at
+  it "should have a flickr_updated_at timestamp matching the flickr photo's updated_at" do
+    @photo.flickr_updated_at.should == @flickr_photo.flickr_updated_at
   end
   
   it "should have a thumbnail source url matching the flickr photo's thumbnail source url" do
@@ -104,13 +117,8 @@ describe Photo do
   
   describe "when creating from a flickr photo" do
     before(:each) do
-      # @flickr_photo = mock(FlickrPhoto, :title => 'Hey', :description => 'Some people',
-      #   :taken_at => 10.days.ago, :updated_at => 9.days.ago, :thumb_source_url => 'http://thumb.com',
-      #   :medium_source_url => 'http://medium.com', :fullsize_source_url => 'http://full.com')
-      @flickr_photo = mock(FlickrPhoto, :id => '12345', :attributes => valid_flickr_photo_attributes)
-      valid_flickr_photo_attributes.each_pair do |key,val|
-        @flickr_photo.stub!(key, val)
-      end
+      @flickr_photo = mock(FlickrPhoto, :id => '12345')
+      stub_attributes(@flickr_photo, flickr_photo_attributes)
     end
     
     describe "and initialializing" do
@@ -124,6 +132,44 @@ describe Photo do
     describe "and creating" do
       before(:each) do
         @photo = Photo.create_from_flickr(@flickr_photo)
+      end
+      
+      it_should_behave_like "a photo matching a flickr photo"
+    end
+  end
+    
+  describe "when updating from flickr" do
+    before(:each) do
+      # setup_attributes(@photo, all_photo_attributes.with(:flickr_id => '12345'))
+      @photo.attributes = all_photo_attributes.with(:flickr_id => '12345')
+      @flickr_photo = mock(FlickrPhoto, :id => '12345')
+      stub_attributes(@flickr_photo, flickr_photo_attributes)
+    end
+    
+    describe "before the update" do
+      it "should have a flickr_id matching the flickr photo's id" do
+        @photo.flickr_id.should == @flickr_photo.id
+      end
+      
+      it "should have a title that does not match the flickr photo's title" do
+        @photo.title.should_not == @flickr_photo.title
+      end
+      
+      it "should have a description that does not match the flickr photo's description" do
+        @photo.description.should_not == @flickr_photo.description
+      end
+      
+      it "should have source urls that match the flickr photo's source urls" do
+        @photo.thumb_source_url.should    == @flickr_photo.thumb_source_url
+        @photo.medium_source_url.should   == @flickr_photo.medium_source_url
+        @photo.fullsize_source_url.should == @flickr_photo.fullsize_source_url
+      end
+    end
+    
+    describe "after the update" do
+      before(:each) do
+        FlickrPhoto.stub!(:new).and_return(@flickr_photo)
+        @photo.update_from_flickr!
       end
       
       it_should_behave_like "a photo matching a flickr photo"
