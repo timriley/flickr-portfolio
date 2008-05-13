@@ -1,18 +1,20 @@
 class FlickrPhoto
-  
   def initialize(id)
     @id = id
+    @attributes = {}
   end
   
   def attributes
     @attributes ||= get_attributes
   end
   
-  def attributes=(attrs)
-    # FIXME there must be a better way to do this.
-    @attributes = attrs
-  end
-  
+  # FIXME need to allow some way for attributes to be pre-loaded during creation.
+  # If these are the only attributes accessed, there is no need to load them.
+  # However, if other attributes are accessed, then get_attributes is called
+  # and the attributes are retrieved from flickr.
+  # Idea! Will probably need to dynamically generate all of those accessor methods to
+  # achieve the above.
+    
   def id
     @id
   end
@@ -43,7 +45,8 @@ class FlickrPhoto
   
   # FIXME this will have to return an array of FlickrPhoto objects now.
   def self.find_all_by_user_and_tag(user_nsid, tag)
-    flickr.photos.search(:user_id => user_nsid, :tags => tag, :extras => 'last_update').collect { |photo| [photo.id, photo.lastupdate] }
+    # flickr.photos.search(:user_id => user_nsid, :tags => tag, :extras => 'last_update').collect { |photo| [photo.id, photo.lastupdate] }
+    flickr.photos.search(:user_id => user_nsid, :tags => tag).collect { |photo| FlickrPhoto.new(photo.id) }
   end
   
   protected

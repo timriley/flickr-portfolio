@@ -11,7 +11,7 @@ class Photo < ActiveRecord::Base
     !self.active?
   end
   
-  def update_from_flickr!
+  def update_from_flickr
     self.attributes = self.attributes.merge(FlickrPhoto.new(self.flickr_id).attributes)
   end
     
@@ -40,7 +40,7 @@ class Photo < ActiveRecord::Base
   
   def self.sync_with_flickr_by_user_and_tag(nsid, tag)
     flickr_photos = FlickrPhoto.find_all_by_user_and_tag(nsid, tag)
-    local_photos  = self.class.find(:all)
+    local_photos  = Photo.find(:all)
     
     # sort all of the current photos by flickr id
     local_photos_by_flickr_id = {}
@@ -51,8 +51,11 @@ class Photo < ActiveRecord::Base
     flickr_photos.each do |flickr_photo|
       if local_photo = local_photos_by_flickr_id[flickr_photo.id]
         # we've imported the photo before, update it from flickr if it is stale
-        local_photo.attributes.merge(flickr_photo.attributes) if local_photo.fickr_updated_at.to_i < flickr_photo.flickr_updated_at
-        local_photo.save
+        if local_photo.flickr_updated_at.to_i < flickr_photo.flickr_updated_at.to_i
+          local_photo.update_from_flickr
+          # local_photo.attributes.merge(flickr_photo.attributes)
+          local_photo.save
+        end
       else
         # if the photo does not exist locally, create it.
         self.class.create_from_flickr(flickr_photo)

@@ -13,16 +13,16 @@ module PhotoSpecHelper
   def all_photo_attributes
     {
       :description => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
-      :taken_at => 100.days.ago,
-      :flickr_updated_at => 99.days.ago
+      :taken_at => 100.days.ago.beginning_of_day,
+      :flickr_updated_at => 99.days.ago.beginning_of_day
     }.merge(valid_photo_attributes)
   end
   def flickr_photo_attributes
     {
       :title => 'Hey',
       :description => 'Some people',
-      :taken_at => 10.days.ago,
-      :flickr_updated_at => 9.days.ago,
+      :taken_at => 10.days.ago.beginning_of_day,
+      :flickr_updated_at => 9.days.ago.beginning_of_day,
       :thumb_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
       :medium_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
       :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
@@ -169,10 +169,62 @@ describe Photo do
     describe "after the update" do
       before(:each) do
         FlickrPhoto.stub!(:new).and_return(@flickr_photo)
-        @photo.update_from_flickr!
+        @photo.update_from_flickr
       end
       
       it_should_behave_like "a photo matching a flickr photo"
     end
+  end
+  
+  describe "when synchronising with flickr" do
+    before(:each) do
+      @photo = Photo.new(flickr_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
+      Photo.stub!(:find).with(:all).and_return([@photo])
+      @flickr_photo = mock(FlickrPhoto, :id => '123')
+      stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))
+      FlickrPhoto.stub!(:find_all_by_user_and_tag).and_return([@flickr_photo])
+      FlickrPhoto.stub!(:new).with(@flickr_photo.id).and_return(@flickr_photo)
+    end
+    
+    describe "when the photos are all up to date" do
+      it_should_behave_like "a photo matching a flickr photo"
+      
+      it "should do nothing when the photos are all up to date" do
+        @local_photo_1.should_receive(:save).exactly(0).times
+        @local_photo_2.should_receive(:save).exactly(0).times
+        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+      end
+    end
+    
+    describe "when the photos have been updated on flickr" do
+      before(:each) do
+        @photo.description = 'previous desc'
+        @photo.flickr_updated_at = 3.days.ago.beginning_of_day
+      end
+      
+      it "should update any values that are altered in the flickr photo" do
+        @photo.stub!(:save).and_return(true)
+        lambda {
+          Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+        }.should change(@photo, :description).from('previous desc').to(@flickr_photo.description)
+      end
+      
+      it "should update the photo from flickr" do
+        @photo.stub!(:save).and_return(true)
+        @photo.should_receive(:update_from_flickr)
+        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+      end
+      
+      it "should save the photo" do
+        @photo.should_receive(:save)
+        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+      end
+    end
+    
+    describe "when new photos have been posted to flickr" do
+      it "should description" do
+        
+      end
+    end    
   end
 end
