@@ -73,35 +73,37 @@ describe Photo do
     @photo = Photo.new
   end
   
-  it "should be valid with flickr photo id, thumb, medium, and fullsize source urls, and title" do
-    @photo.attributes = valid_photo_attributes
-    @photo.should be_valid
-  end
+  describe "every photo" do
+    it "should be valid with flickr photo id, thumb, medium, and fullsize source urls, and title" do
+      @photo.attributes = valid_photo_attributes
+      @photo.should be_valid
+    end
   
-  it "should be invalid without flickr photo id" do
-    @photo.attributes = valid_photo_attributes.except(:flickr_id)
-    @photo.should_not be_valid
-  end
+    it "should be invalid without flickr photo id" do
+      @photo.attributes = valid_photo_attributes.except(:flickr_id)
+      @photo.should_not be_valid
+    end
   
-  it "should be invalid without a thumbnail photo source url" do
-    @photo.attributes = valid_photo_attributes.except(:thumb_source_url)
-    @photo.should_not be_valid
-  end
+    it "should be invalid without a thumbnail photo source url" do
+      @photo.attributes = valid_photo_attributes.except(:thumb_source_url)
+      @photo.should_not be_valid
+    end
     
-  it "should be invalid without a medium photo source url" do
-    @photo.attributes = valid_photo_attributes.except(:medium_source_url)
-    @photo.should_not be_valid
-  end
+    it "should be invalid without a medium photo source url" do
+      @photo.attributes = valid_photo_attributes.except(:medium_source_url)
+      @photo.should_not be_valid
+    end
   
-  it "should be invalid without a fullsize photo source url" do
-    @photo.attributes = valid_photo_attributes.except(:fullsize_source_url)
-    @photo.should_not be_valid
-  end
+    it "should be invalid without a fullsize photo source url" do
+      @photo.attributes = valid_photo_attributes.except(:fullsize_source_url)
+      @photo.should_not be_valid
+    end
 
-  it "should be invalid without title" do
-    @photo.attributes = valid_photo_attributes.except(:title)
-    @photo.should_not be_valid
-    @photo.should have(1).errors
+    it "should be invalid without title" do
+      @photo.attributes = valid_photo_attributes.except(:title)
+      @photo.should_not be_valid
+      @photo.should have(1).errors
+    end    
   end
       
   describe "when created" do
@@ -109,7 +111,7 @@ describe Photo do
       @photo.attributes = valid_photo_attributes
       @photo.save!
     end
-    
+  
     it "should be active when created" do
       @photo.should be_active    
     end
@@ -187,9 +189,7 @@ describe Photo do
     end
     
     describe "when the photos are all up to date" do
-      it_should_behave_like "a photo matching a flickr photo"
-      
-      it "should do nothing when the photos are all up to date" do
+      it "should do nothing" do
         @local_photo_1.should_receive(:save).exactly(0).times
         @local_photo_2.should_receive(:save).exactly(0).times
         Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
@@ -220,11 +220,18 @@ describe Photo do
         Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
       end
     end
-    
+
     describe "when new photos have been posted to flickr" do
-      it "should description" do
-        
+      before(:each) do
+        @new_flickr_photo = mock(FlickrPhoto, :id => '456')
+        stub_attributes(@new_flickr_photo, flickr_photo_attributes)
+        FlickrPhoto.stub!(:find_all_by_user_and_tag).and_return([@new_flickr_photo, @flickr_photo])
       end
-    end    
+      
+      it "should create the new photos from flickr" do
+        Photo.should_receive(:create_from_flickr).with(@new_flickr_photo)
+        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+      end
+    end
   end
 end

@@ -7,10 +7,6 @@ class Photo < ActiveRecord::Base
   validates_presence_of   :fullsize_source_url, :message => "can't be blank"
   validates_presence_of   :title,               :message => "can't be blank"
   
-  def hidden?
-    !self.active?
-  end
-  
   def update_from_flickr
     self.attributes = self.attributes.merge(FlickrPhoto.new(self.flickr_id).attributes)
   end
@@ -58,7 +54,7 @@ class Photo < ActiveRecord::Base
         end
       else
         # if the photo does not exist locally, create it.
-        self.class.create_from_flickr(flickr_photo)
+        Photo.create_from_flickr(flickr_photo)
       end
     end
   end  
