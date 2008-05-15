@@ -1,7 +1,6 @@
 class FlickrPhoto
   def initialize(id)
     @id = id
-    @attributes = {}
   end
   
   def attributes
