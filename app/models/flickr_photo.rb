@@ -27,7 +27,7 @@ class FlickrPhoto
     attributes[:taken_at]
   end
   def flickr_updated_at
-    attributes[:updated_at]
+    attributes[:flickr_updated_at]
   end
   def updated_at
     flickr_updated_at
@@ -42,9 +42,7 @@ class FlickrPhoto
     attributes[:fullsize_source_url]
   end
   
-  # FIXME this will have to return an array of FlickrPhoto objects now.
   def self.find_all_by_user_and_tag(user_nsid, tag)
-    # flickr.photos.search(:user_id => user_nsid, :tags => tag, :extras => 'last_update').collect { |photo| [photo.id, photo.lastupdate] }
     flickr.photos.search(:user_id => user_nsid, :tags => tag).collect { |photo| FlickrPhoto.new(photo.id) }
   end
   
@@ -59,7 +57,7 @@ class FlickrPhoto
     attrs[:title]             = info.title
     attrs[:description]       = info.description
     attrs[:taken_at]          = info.dates.taken ? Time.parse(info.dates.taken) : nil # not everything has exif data
-    attrs[:flickr_updated_at] = info.dates.lastupdate
+    attrs[:flickr_updated_at] = Time.parse(info.dates.lastupdate)
     
     urls.each do |u|
       case u.label
