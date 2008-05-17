@@ -1,0 +1,9 @@
+%h1= @photo.title
+
+%img{:src => @photo.medium_source_url}
+
+- if @photo.previous
+  %p= link_to 'previous', photo_path(@photo.previous)
+
+- if @photo.next
+  %p= link_to 'next', photo_path(@photo.next)

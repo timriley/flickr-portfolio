@@ -40,7 +40,7 @@ class FlickrPhoto
   end
   
   def self.find_all_by_user_and_tag(user_nsid, tag)
-    flickr.photos.search(:user_id => user_nsid, :tags => tag).collect { |photo| FlickrPhoto.new(photo.id) }
+    flickr.photos.search(:user_id => user_nsid, :tags => tag, :sort => 'date-posted-desc').collect { |photo| FlickrPhoto.new(photo.id) }
   end
   
   protected
@@ -54,6 +54,7 @@ class FlickrPhoto
     attrs[:title]             = info.title
     attrs[:description]       = info.description
     attrs[:taken_at]          = info.dates.taken ? Time.parse(info.dates.taken) : nil # not everything has exif data
+    # FIXME wrap lastupdate in time.parse?
     attrs[:flickr_updated_at] = info.dates.lastupdate
     
     urls.each do |u|

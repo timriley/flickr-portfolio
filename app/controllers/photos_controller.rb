@@ -1,15 +1,7 @@
 class PhotosController < ApplicationController
-  def index
-    @photos = Photo.find(:all)
-    
-    respond_to do |format|
-      format.html
-      format.xml { render :xml => @photos }
-    end
-  end
-  
   def show
-    @photo = Photo.find(params[:id])
+    # Find the photo from id, or get the most recent one.
+    @photo = params[:id] ? Photo.find(params[:id]) : Photo.find(:first, :order => 'created_at DESC')
     
     respond_to do |format|
       format.html

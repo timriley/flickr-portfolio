@@ -1,5 +1,5 @@
 class Photo < ActiveRecord::Base
-    
+
   validates_uniqueness_of :flickr_id
   validates_presence_of   :flickr_id,           :message => "can't be blank"
   validates_presence_of   :thumb_source_url,    :message => "can't be blank"
@@ -9,6 +9,14 @@ class Photo < ActiveRecord::Base
   
   def update_from_flickr
     self.attributes = self.attributes.merge(FlickrPhoto.new(self.flickr_id).attributes)
+  end
+  
+  def previous
+    @previous_photo ||= Photo.find(:first, :order => 'created_at DESC', :conditions => ['created_at < ?', created_at])
+  end
+  
+  def next
+    @next_photo ||= Photo.find(:first, :order => 'created_at ASC', :conditions => ['created_at > ?', created_at])
   end
     
   def self.new_from_flickr(flickr_photo)

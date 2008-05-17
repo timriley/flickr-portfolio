@@ -66,3 +66,6 @@ rescue => e
   # FIXME "logger" does not exist here.
   # logger.error "flickraw init: could not connect to flickr: #{e}"    
 end
+
+gem 'will_paginate'
+require 'will_paginate'
