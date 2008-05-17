@@ -61,8 +61,8 @@ describe FlickrPhoto do
     end
     
     it "should have properly formatted source urls" do
-      @flickr_url_thumb.stub!(:source).and_return('http: //weird\\/url')
-      @flickr_photo.thumb_source_url.should == 'http://weird/url'
+      @flickr_url_thumb.stub!(:source).and_return('http: \\/\\/www.flickr.com\\/photos\\/timriley\\/469937075\\/sizes\\/m\\/')
+      @flickr_photo.thumb_source_url.should == 'http://www.flickr.com/photos/timriley/469937075/sizes/m/'
     end
   end
   
