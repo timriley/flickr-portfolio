@@ -29,9 +29,6 @@ class FlickrPhoto
   def flickr_updated_at
     attributes[:flickr_updated_at]
   end
-  def updated_at
-    flickr_updated_at
-  end
   def thumb_source_url
     attributes[:thumb_source_url]
   end
