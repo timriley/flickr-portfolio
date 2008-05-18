@@ -9,7 +9,55 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define(:version => 2) do
+
+  create_table "bj_config", :primary_key => "bj_config_id", :force => true do |t|
+    t.text "hostname"
+    t.text "key"
+    t.text "value"
+    t.text "cast"
+  end
+
+  add_index "bj_config", ["hostname", "key"], :name => "index_bj_config_on_hostname_and_key", :unique => true
+
+  create_table "bj_job", :primary_key => "bj_job_id", :force => true do |t|
+    t.text     "command"
+    t.text     "state"
+    t.integer  "priority"
+    t.text     "tag"
+    t.integer  "is_restartable"
+    t.text     "submitter"
+    t.text     "runner"
+    t.integer  "pid"
+    t.datetime "submitted_at"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.text     "env"
+    t.text     "stdin"
+    t.text     "stdout"
+    t.text     "stderr"
+    t.integer  "exit_status"
+  end
+
+  create_table "bj_job_archive", :primary_key => "bj_job_archive_id", :force => true do |t|
+    t.text     "command"
+    t.text     "state"
+    t.integer  "priority"
+    t.text     "tag"
+    t.integer  "is_restartable"
+    t.text     "submitter"
+    t.text     "runner"
+    t.integer  "pid"
+    t.datetime "submitted_at"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "archived_at"
+    t.text     "env"
+    t.text     "stdin"
+    t.text     "stdout"
+    t.text     "stderr"
+    t.integer  "exit_status"
+  end
 
   create_table "photos", :force => true do |t|
     t.string   "title"

@@ -69,3 +69,5 @@ end
 
 gem 'will_paginate'
 require 'will_paginate'
+
+require 'bj'
