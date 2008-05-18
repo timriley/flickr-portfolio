@@ -57,17 +57,3 @@ Rails::Initializer.run do |config|
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
 end
-
-begin
-  require 'flickraw'
-  FlickRaw.api_key = 'c6dd75f50c46aeb23918d4dd857220fe'
-  FlickRaw.shared_secret = '5f1baac675b760c3'
-rescue => e
-  # FIXME "logger" does not exist here.
-  # logger.error "flickraw init: could not connect to flickr: #{e}"    
-end
-
-gem 'will_paginate'
-require 'will_paginate'
-
-require 'bj'

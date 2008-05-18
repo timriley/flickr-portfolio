@@ -73,5 +73,5 @@ class FlickrPhoto
   
   def fix_url(str)
     str.gsub('\\','').gsub('http: ', 'http:')
-  end
+  end  
 end
