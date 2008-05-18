@@ -4,3 +4,5 @@ tmp/**/*
 doc/api
 doc/app
 coverage
+config/database.yml
+config/config.yml
