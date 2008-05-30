@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe FlickrPhoto do
   describe "created with a flickr id" do
     before(:each) do
-      @flickr_dates      = mock('flickr dates', :taken => "2006-11-12 15: 05: 00",  :lastupdate => "2006-11-12 15: 09: 00")
+      @flickr_dates      = mock('flickr dates', :taken => "2006-11-12 15: 05: 00",  :lastupdate => "1207365225")
       @flickr_info       = mock('flickr info',          :title => 'Dinner',         :description => 'Tuna Pizza', :dates => @flickr_dates)
       @flickr_url_thumb  = mock('flickr thumb url',     :label => 'Thumbnail',      :source => 'http://flickr.com/thumbnail')
       @flickr_url_med    = mock('flickr medium url',    :label => 'Medium',         :source => 'http://flickr.com/medium')
@@ -45,7 +45,7 @@ describe FlickrPhoto do
     end
     
     it "should have a flickr_updated_at timestamp that matches the remote photo's lastupdate timestamp" do
-      @flickr_photo.flickr_updated_at.should == Time.parse(@flickr_dates.lastupdate)
+      @flickr_photo.flickr_updated_at.should == Time.at(@flickr_dates.lastupdate.to_i)
     end
     
     it "should have a thumb source url matching the remote photo's thumb source url" do

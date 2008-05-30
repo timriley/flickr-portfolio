@@ -55,7 +55,7 @@ class FlickrPhoto
     attrs[:description]       = info.description
     attrs[:taken_at]          = info.dates.taken ? Time.parse(info.dates.taken) : nil # not everything has exif data
     # FIXME wrap lastupdate in time.parse?
-    attrs[:flickr_updated_at] = info.dates.lastupdate
+    attrs[:flickr_updated_at] = Time.at(info.dates.lastupdate.to_i)
     
     urls.each do |u|
       case u.label

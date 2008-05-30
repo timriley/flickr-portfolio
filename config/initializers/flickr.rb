@@ -7,4 +7,5 @@ rescue => e
   # logger.error "flickraw init: could not connect to flickr: #{e}"    
 end
 
-Bj.submit "./script/runner ./lib/jobs/synchronise.rb"
+# Only start the syncs if we're in dev or production.
+# Bj.submit "./script/runner ./lib/jobs/synchronise.rb" if %w{development production}.include?(Rails.env)
