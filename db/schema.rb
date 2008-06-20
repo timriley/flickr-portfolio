@@ -18,8 +18,6 @@ ActiveRecord::Schema.define(:version => 2) do
     t.text "cast"
   end
 
-  add_index "bj_config", ["hostname", "key"], :name => "index_bj_config_on_hostname_and_key", :unique => true
-
   create_table "bj_job", :primary_key => "bj_job_id", :force => true do |t|
     t.text     "command"
     t.text     "state"

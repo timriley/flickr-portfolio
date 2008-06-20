@@ -9,3 +9,4 @@ end
 
 # Only start the syncs if we're in dev or production.
 # Bj.submit "./script/runner ./lib/jobs/synchronise.rb" if %w{development production}.include?(Rails.env)
+# Bj.submit "./script/runner ./lib/jobs/synchronise.rb"
