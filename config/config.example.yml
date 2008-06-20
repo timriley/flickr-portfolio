@@ -1,8 +1,6 @@
 development: &non_production_settings
   flickr_user_id: 24905543@N00
   synchronise_tag: study
-audit_development:
-  <<: *non_production_settings
 test:
   <<: *non_production_settings
 production:
