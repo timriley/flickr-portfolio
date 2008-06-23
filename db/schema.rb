@@ -1,5 +1,5 @@
 # This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of ActiveRecord to incrementally modify your database, and
+# please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
 # Note that this schema.rb definition is the authoritative source for your database schema. If you need
@@ -21,12 +21,12 @@ ActiveRecord::Schema.define(:version => 2) do
   create_table "bj_job", :primary_key => "bj_job_id", :force => true do |t|
     t.text     "command"
     t.text     "state"
-    t.integer  "priority"
+    t.integer  "priority",       :limit => 11
     t.text     "tag"
-    t.integer  "is_restartable"
+    t.integer  "is_restartable", :limit => 11
     t.text     "submitter"
     t.text     "runner"
-    t.integer  "pid"
+    t.integer  "pid",            :limit => 11
     t.datetime "submitted_at"
     t.datetime "started_at"
     t.datetime "finished_at"
@@ -34,18 +34,18 @@ ActiveRecord::Schema.define(:version => 2) do
     t.text     "stdin"
     t.text     "stdout"
     t.text     "stderr"
-    t.integer  "exit_status"
+    t.integer  "exit_status",    :limit => 11
   end
 
   create_table "bj_job_archive", :primary_key => "bj_job_archive_id", :force => true do |t|
     t.text     "command"
     t.text     "state"
-    t.integer  "priority"
+    t.integer  "priority",       :limit => 11
     t.text     "tag"
-    t.integer  "is_restartable"
+    t.integer  "is_restartable", :limit => 11
     t.text     "submitter"
     t.text     "runner"
-    t.integer  "pid"
+    t.integer  "pid",            :limit => 11
     t.datetime "submitted_at"
     t.datetime "started_at"
     t.datetime "finished_at"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.text     "stdin"
     t.text     "stdout"
     t.text     "stderr"
-    t.integer  "exit_status"
+    t.integer  "exit_status",    :limit => 11
   end
 
   create_table "photos", :force => true do |t|
