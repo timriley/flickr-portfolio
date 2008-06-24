@@ -1,2 +1,2 @@
-module LoginsHelper
+module Admin::LoginsHelper
 end

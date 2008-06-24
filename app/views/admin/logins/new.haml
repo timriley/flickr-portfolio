@@ -1,0 +1,10 @@
+%p= flash[:notice]
+
+- form_tag admin_login_path do
+  #login
+    %p
+      %label{:for => 'password'} Password
+      %br
+      = password_field_tag :password
+    %p.button
+      = submit_tag 'Log in'
