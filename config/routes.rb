@@ -6,6 +6,6 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :settings
     admin.resource :login
     admin.logout '/logout', :controller => 'logins', :action => 'destroy'
-    admin.root :controller => 'settings', :action => 'edit'
+    admin.root :controller => 'settings', :action => 'show'
   end
 end

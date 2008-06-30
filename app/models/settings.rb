@@ -1,6 +1,8 @@
 class Settings
   include Singleton
   
+  attr_accessor :password
+  
   # this allows us to read and write settings of any name
   def method_missing(method_id, *arguments)
     case method_id.to_s
@@ -18,14 +20,17 @@ class Settings
   end
   
   def save
+    # encrypt the password
+    self.crypted_password = self.password unless self.password.blank?
+    
     File.open("#{Rails.root}/config/config.yml", 'w') { |f| YAML.dump(@raw_tree, f) }
   end
+  
+  protected
   
   def tree
     @raw_tree ||= YAML.load_file("#{Rails.root}/config/config.yml")
   end
-  
-  private
     
   def read_setting(key)
     tree[Rails.env][key]
