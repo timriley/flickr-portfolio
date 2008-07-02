@@ -16,7 +16,7 @@ class Admin::SettingsController < Admin::AdminController
         flash[:notice] = 'Settings saved'
         format.html { redirect_to admin_settings_path }
       else
-        format.html { render 'index' }
+        format.html { render :action => 'show' }
       end
     end
   end

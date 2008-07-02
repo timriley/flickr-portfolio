@@ -30,6 +30,8 @@ class Settings
       self.crypted_password = self.password unless self.password.blank?
     
       File.open("#{Rails.root}/config/config.yml", 'w') { |f| YAML.dump(@raw_tree, f) }
+      
+      # FIXME find out what I should return from a successful save
     else
       false
     end
