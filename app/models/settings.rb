@@ -1,6 +1,11 @@
 class Settings
   include Singleton
+  include Validatable
+
+  validates_presence_of :flickr_user_id, :synchronise_tag
+  validates_presence_of :crypted_password, :crypted_password_salt
   
+  # accessor for the unencrypted password
   attr_accessor :password
   
   # this allows us to read and write settings of any name
@@ -20,10 +25,14 @@ class Settings
   end
   
   def save
-    # encrypt the password
-    self.crypted_password = self.password unless self.password.blank?
+    if valid?
+      # encrypt the password
+      self.crypted_password = self.password unless self.password.blank?
     
-    File.open("#{Rails.root}/config/config.yml", 'w') { |f| YAML.dump(@raw_tree, f) }
+      File.open("#{Rails.root}/config/config.yml", 'w') { |f| YAML.dump(@raw_tree, f) }
+    else
+      false
+    end
   end
   
   protected
