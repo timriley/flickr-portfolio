@@ -1,0 +1,18 @@
+- content_for(:content) do
+  #header
+    %h1 photoblogr admin
+    - if logged_in?
+      %ul#navigation
+        %li
+          %a{:href => '#'} activity
+        %li
+          %a{:href => '#'} theme
+        %li
+          %a{:href => '#'} settings
+        %li
+          = link_to 'logout', admin_logout_path
+  
+  #admin.container
+    = yield
+        
+= render 'layouts/admin_wrapper'

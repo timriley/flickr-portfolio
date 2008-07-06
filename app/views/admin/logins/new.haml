@@ -1,10 +1,15 @@
-%p= flash[:notice]
+#header
+  %h1 photoblogr admin
 
-- form_tag admin_login_path do
-  #login
-    %p
-      %label{:for => 'password'} Password
-      %br
-      = password_field_tag :password
-    %p.button
-      = submit_tag 'Log in'
+#login.container
+
+  %p= flash[:notice]
+
+  - form_tag admin_login_path do
+    #login
+      %p
+        %label{:for => 'password'} Password
+        %br
+        = password_field_tag :password, nil, :class => 'login'
+      %p.button
+        = submit_tag 'Log in'

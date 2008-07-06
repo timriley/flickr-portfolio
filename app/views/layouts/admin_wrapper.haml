@@ -1,0 +1,16 @@
+!!! Strict
+%html
+  %head
+    %meta{'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'}
+    %title= "Photoblogr - #{@title}"
+    = stylesheet_link_tag 'admin', :media => 'all'
+    = yield :stylesheet_includes
+    = javascript_include_tag 'jquery', :cache => false
+    = yield :javascript_library_includes
+    = javascript_include_tag 'application', :cache => false
+    = yield :javascript_includes
+    = yield :rss_includes
+
+  %body
+    / this allow the layout to be used by another layout or included directly
+    = yield(:content) || yield

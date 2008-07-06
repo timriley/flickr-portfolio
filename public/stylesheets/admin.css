@@ -1,0 +1,105 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Lucida Grande , Lucida Sans , sans-serif;
+  font-size: 100%;
+  background: #333333; }
+
+#header {
+  width: 560px;
+  margin: 0 auto;
+  font-size: 0.75em;
+  font-family: Helvetica Neue , Helvetica , sans-serif; }
+  #header h1 {
+    color: #ffffff;
+    font-weight: normal;
+    margin: 30px 0 3px 0;
+    letter-spacing: 0.04em; }
+  #header ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    #header ul li {
+      float: left;
+      text-align: left; }
+      #header ul li a {
+        display: block;
+        color: #ffff66;
+        text-decoration: none;
+        text-transform: uppercase;
+        margin-right: 20px; }
+      #header ul li a:hover {
+        text-decoration: underline;
+        color: #ffcc66; }
+
+.container {
+  width: 500px;
+  height: 300px;
+  margin: 15px auto;
+  padding: 10px 20px;
+  border: 10px solid #ffffff;
+  color: #ffffff;
+  font-size: 0.75em;
+  line-height: 2em; }
+  .container h2 {
+    padding: 5px 10px;
+    width: 200px; }
+  .container ul {
+    list-style-position: inside;
+    margin: 0;
+    padding: 0; }
+    .container ul li {
+      margin-bottom: 10px; }
+  .container a {
+    color: #ffffff; }
+  .container a:hover {
+    background: #ffffff;
+    color: #555555; }
+
+#admin {
+  background: #15add1; }
+  #admin h2 {
+    background: #007aa5; }
+
+#login {
+  background: #15add1; }
+  #login h2 {
+    background: #007aa5; }
+
+#footer {
+  width: 560px;
+  margin: 0 auto;
+  margin-bottom: 0;
+  font-family: Helvetica Neue , Helvetica , sans-serif; }
+  #footer p {
+    color: #aaaaaa;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0; }
+  #footer a {
+    text-decoration: none;
+    color: #ffff66; }
+  #footer a:hover {
+    text-decoration: underline;
+    color: #ffcc66; }
+
+ul#navigation:after {
+  content: '.';
+  display: block;
+  visibility: hidden;
+  clear: both;
+  height: 0; }
+
+* html ul#navigation {
+  height: 1px; }
+
+ul#navigation {
+  min-height: 1px; }
+
+input {
+  border: 1px solid #aacfe4; }
+
+input.login {
+  font-size: 30px;
+  width: 350px; }
