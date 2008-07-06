@@ -1,7 +1,10 @@
 class Photo < ActiveRecord::Base
+  
+  acts_as_audited
 
   validates_uniqueness_of :flickr_id
   validates_presence_of   :flickr_id,           :message => "can't be blank"
+  validates_presence_of   :square_source_url,   :message => "can't be blank"
   validates_presence_of   :thumb_source_url,    :message => "can't be blank"
   validates_presence_of   :medium_source_url,   :message => "can't be blank"
   validates_presence_of   :fullsize_source_url, :message => "can't be blank"
@@ -26,6 +29,7 @@ class Photo < ActiveRecord::Base
       photo.description         = flickr_photo.description
       photo.taken_at            = flickr_photo.taken_at
       photo.flickr_updated_at   = flickr_photo.flickr_updated_at
+      photo.square_source_url   = flickr_photo.square_source_url
       photo.thumb_source_url    = flickr_photo.thumb_source_url
       photo.medium_source_url   = flickr_photo.medium_source_url
       photo.fullsize_source_url = flickr_photo.fullsize_source_url

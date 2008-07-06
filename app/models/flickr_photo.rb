@@ -29,6 +29,9 @@ class FlickrPhoto
   def flickr_updated_at
     attributes[:flickr_updated_at]
   end
+  def square_source_url
+    attributes[:square_source_url]
+  end
   def thumb_source_url
     attributes[:thumb_source_url]
   end
@@ -59,6 +62,8 @@ class FlickrPhoto
     
     urls.each do |u|
       case u.label
+      when 'Square':
+        attrs[:square_source_url] = fix_url(u.source)
       when 'Thumbnail':
         attrs[:thumb_source_url] = fix_url(u.source)
       when 'Medium':

@@ -1,18 +1,25 @@
+!dark_blue    = #1C6AA6
+!light_blue   = #6BA8D6
+!light_grey   = #D1D1D1
+!dark_grey    = #8C8C8C
+!darkest_grey = #4A4A4A
+
 body
-  :margin = 0
-  :padding = 0
   :font-family = "Lucida Grande", "Lucida Sans", "sans-serif"
-  :font-size = 100%
-  :background = #333
+  :background = !darkest_grey
+  
+p
+  :padding = 0.5em 0em
 
 #header
-  :width = 560px
+  :width = 540px
   :margin = 0 auto
   :font-size = .75em
   :font-family = "Helvetica Neue", "Helvetica", "sans-serif"
   h1
-    :color = #fff
+    :font-size = 2em
     :font-weight = normal
+    :color = #fff
     :margin = 30px 0 3px 0
     :letter-spacing = .04em
   ul
@@ -22,22 +29,42 @@ body
     li
       :float = left
       :text-align = left
+      :display = block
+      :color = #fff
+      :text-transform = uppercase
+      :font-weight = bold
+      :margin-right = 20px
       a
-        :display = block
         :color = #ffff66
         :text-decoration = none
-        :text-transform = uppercase
-        :margin-right = 20px
       a:hover
         :text-decoration = underline
         :color = #ffcc66
 
+#footer
+  :width = 540px
+  :margin = 0 auto
+  :margin-bottom = 0
+  :font-family = "Helvetica Neue", "Helvetica", "sans-serif"
+  p
+    :color = #aaa
+    :font-size = .75em
+    :text-transform = uppercase
+    :letter-spacing = .04em
+    :margin = 0
+  a
+    :text-decoration = none
+    :color = #ffff66
+  a:hover
+    :text-decoration = underline
+    :color = #ffcc66
+
 .container
   :width = 500px
-  :height = 300px
+  :min-height = 300px
   :margin = 15px auto
-  :padding = 10px 20px
-  :border = 10px solid #fff
+  :padding = 10px
+  :border = 10px solid !light_grey
   :color = #fff
   :font-size = .75em
   :line-height = 2em
@@ -57,33 +84,21 @@ body
     :color = #555
 
 #admin
-  :background = #15add1
+  :background = !dark_blue
   h2
     :background = #007aa5
+  input
+    :font-size = 1.5em
+  input[type="text"], input[type="password"]
+    :width = 350px
 
 #login
-  :background = #15add1
-  / :text-align = center
+  :background = !dark_blue
+  input[type="password"]
+    :font-size = 30px
+    :width = 350px
   h2
     :background = #007aa5
-
-#footer
-  :width = 560px
-  :margin = 0 auto
-  :margin-bottom = 0
-  :font-family = "Helvetica Neue", "Helvetica", "sans-serif"
-  p
-    :color = #aaa
-    :font-size = .75em
-    :text-transform = uppercase
-    :letter-spacing = .04em
-    :margin = 0
-  a
-    :text-decoration = none
-    :color = #ffff66
-  a:hover
-    :text-decoration = underline
-    :color = #ffcc66
 
 ul#navigation:after 
   :content = '.'
@@ -100,8 +115,28 @@ ul#navigation
   
 input
   :border = 1px solid #aacfe4
-  
-input.login
-  :font-size = 30px
-  :width = 350px
-  /:text-align = center
+
+.audit
+  :margin-bottom = 1em
+  .audit_image
+    a
+      :border = none
+    img
+      :float = left
+      :margin-right = 0.5em
+      :margin-bottom = 0.5em
+      :border = 3px solid !light_grey
+    img:hover
+      :border = 3px solid !light_blue
+  .audit_details
+    :vertical-align = top
+    h4
+      :line-height = 1em
+      :margin = 0
+      / :margin-top = -0.5em
+      :padding = 0
+      :font-size = 1em
+      :font-weight = bold
+    p
+      :margin = 0
+      :padding = 0

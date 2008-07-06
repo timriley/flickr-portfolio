@@ -3,9 +3,10 @@
   %head
     %meta{'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'}
     %title= "Photoblogr - #{@title}"
+    = stylesheet_link_tag 'reset', :media => 'all'
     = stylesheet_link_tag 'admin', :media => 'all'
     = yield :stylesheet_includes
-    = javascript_include_tag 'jquery', :cache => false
+    = javascript_include_tag 'jquery', 'jquery.livequery', :cache => false
     = yield :javascript_library_includes
     = javascript_include_tag 'application', :cache => false
     = yield :javascript_includes

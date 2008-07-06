@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080706055700) do
+ActiveRecord::Schema.define(:version => 20080706075116) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id",   :limit => 11
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(:version => 20080706055700) do
     t.datetime "flickr_updated_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "square_source_url"
   end
 
 end

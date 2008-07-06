@@ -1,0 +1,13 @@
+%tr.audit{:valign => 'top'}
+  %td.audit_image
+    = link_to(image_tag(audit.auditable.square_source_url, :class => 'audit_thumbnail'), photo_path(audit.auditable))
+  %td.audit_details{:valign => 'top'}
+    %h4= audit.created_at.to_s(:audit_heading)
+    / FIXME: these action words should have different colours
+    - if (audit_action = YAML::load(audit.action)) == :create
+      %p= "<b>Created</b> <i>#{audit.auditable.title}</i>"
+    - elsif audit_action == 'update'
+      %p= "<b>Updated</b> <i>#{audit.auditable.title}</i>"
+    - elsif audit_action == 'delete'
+      %p= "<b>Deleted</b> <i>#{audit.auditable.title}</i>"
+  
