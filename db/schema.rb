@@ -9,7 +9,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 2) do
+ActiveRecord::Schema.define(:version => 20080706055700) do
+
+  create_table "audits", :force => true do |t|
+    t.integer  "auditable_id",   :limit => 11
+    t.string   "auditable_type"
+    t.integer  "user_id",        :limit => 11
+    t.string   "user_type"
+    t.string   "username"
+    t.string   "action"
+    t.text     "changes"
+    t.integer  "version",        :limit => 11, :default => 0
+    t.datetime "created_at"
+  end
+
+  add_index "audits", ["auditable_id", "auditable_type"], :name => "auditable_index"
+  add_index "audits", ["user_id", "user_type"], :name => "user_index"
+  add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
 
   create_table "bj_config", :primary_key => "bj_config_id", :force => true do |t|
     t.text "hostname"
