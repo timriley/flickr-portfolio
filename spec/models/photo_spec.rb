@@ -3,29 +3,31 @@ require File.dirname(__FILE__) + '/../spec_helper'
 module PhotoSpecHelper
   def valid_photo_attributes
     {
-     :flickr_id => '325946210',
-     :title => "Last time's the charm",
-     :thumb_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
-     :medium_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
+     :flickr_id           => '325946210',
+     :title               => "Last time's the charm",
+     :square_source_url   => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_s.jpg',
+     :thumb_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
+     :medium_source_url   => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
      :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
     }
   end
   def all_photo_attributes
     {
-      :description => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
-      :taken_at => 100.days.ago.beginning_of_day,
-      :flickr_updated_at => 99.days.ago.beginning_of_day
+      :description        => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
+      :taken_at           => 100.days.ago.beginning_of_day,
+      :flickr_updated_at  => 99.days.ago.beginning_of_day
     }.merge(valid_photo_attributes)
   end
   def flickr_photo_attributes
     {
-      :title => 'Hey',
-      :description => 'Some people',
-      :taken_at => 10.days.ago.beginning_of_day,
-      :flickr_updated_at => 9.days.ago.beginning_of_day,
-      :thumb_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
-      :medium_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
-      :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
+      :title                => 'Hey',
+      :description          => 'Some people',
+      :taken_at             => 10.days.ago.beginning_of_day,
+      :flickr_updated_at    => 9.days.ago.beginning_of_day,
+      :square_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_s.jpg',
+      :thumb_source_url     => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
+      :medium_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
+      :fullsize_source_url  => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
     }
   end
   def stub_attributes(obj, attrs)

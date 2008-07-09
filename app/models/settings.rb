@@ -26,12 +26,13 @@ class Settings
   
   def save
     if valid?
-      # encrypt the password
+      # Encrypt the password
       self.crypted_password = self.password unless self.password.blank?
-    
+      # Write out the file and return true
       File.open("#{Rails.root}/config/config.yml", 'w') { |f| YAML.dump(@raw_tree, f) }
-      
-      # FIXME find out what I should return from a successful save
+      true
+      # FIXME is there ever going to be a reason to return false here (even with a valid object)?
+      # perhaps if the write to file fails?
     else
       false
     end
