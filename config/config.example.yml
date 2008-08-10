@@ -1,7 +1,20 @@
-development: &non_production_settings
-  flickr_user_id: 24905543@N00
+audit_development: 
   synchronise_tag: study
-test:
-  <<: *non_production_settings
-production:
-  <<: *non_production_settings
+  crypted_password_salt: 4e564b543b80350d3401decadf8242ff568c8d14
+  flickr_user_id: 24905543@N00
+  crypted_password: 420953cc5fd518328572b2b50acbcb73f4b51f0a
+development: 
+  synchronise_tag: study
+  crypted_password_salt: 4e564b543b80350d3401decadf8242ff568c8d14
+  flickr_user_id: 24905543@N00
+  crypted_password: 420953cc5fd518328572b2b50acbcb73f4b51f0a
+production: 
+  synchronise_tag: study
+  crypted_password_salt: 4e564b543b80350d3401decadf8242ff568c8d14
+  flickr_user_id: 24905543@N00
+  crypted_password: 420953cc5fd518328572b2b50acbcb73f4b51f0a
+test: 
+  synchronise_tag: study
+  crypted_password_salt: 4e564b543b80350d3401decadf8242ff568c8d14
+  flickr_user_id: 24905543@N00
+  crypted_password: 420953cc5fd518328572b2b50acbcb73f4b51f0a
