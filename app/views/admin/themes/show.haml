@@ -1,0 +1,13 @@
+- if flash[:notice]
+  %p= flash[:notice]
+
+- form_for :theme, @theme, :url => admin_theme_path, :html => {:method => :put} do |f|
+  %p
+    = f.label :template, 'Template'
+    %br
+    = f.text_area :template
+    
+  %p
+    = f.submit 'Save'
+    or
+    = link_to 'Cancel', admin_theme_path

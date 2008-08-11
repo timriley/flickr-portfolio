@@ -5,8 +5,7 @@
       %ul#navigation
         / need a different call for a route that is the root for the namespace
         %li= link_to_unless(current_page?(:controller => 'admin/updates') || controller.request.request_uri =~ /\/admin$/, 'photo updates', admin_updates_path)
-        %li
-          %a{:href => '#'} theme
+        %li= link_to_unless_current 'theme', admin_theme_path
         %li= link_to_unless_current 'settings', admin_settings_path
         %li= link_to 'logout', admin_logout_path
   
