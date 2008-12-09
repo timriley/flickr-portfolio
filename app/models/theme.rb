@@ -2,7 +2,7 @@ class Theme
   include Singleton
   include Validatable
   
-  THEME_FILE = "#{Rails.root}/config/template.txt"
+  THEME_FILE = File.join(Rails.root, 'config', 'template.html')
 
   attr_accessor :template
   
@@ -14,7 +14,7 @@ class Theme
   
   def save
     backup_file
-    File.open(THEME_FILE) do |file|
+    File.open(THEME_FILE, 'w+') do |file|
       file.write(@template)
       file.flush
     end

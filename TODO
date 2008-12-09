@@ -1,0 +1,8 @@
+- wrap all calls to flickr in begin and rescue blocks (logger.error in rescue)
+
+- liquid layout-fu:
+
+- need to fix up the syncing. ie. when changing tags, must remove/disable any photos that exist
+  from a sync using the previous tag.
+  
+- need to verify that sync order is still correct (it looks like it is oldest first after a recent test)

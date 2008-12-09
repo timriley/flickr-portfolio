@@ -10,6 +10,15 @@ class Photo < ActiveRecord::Base
   validates_presence_of   :fullsize_source_url, :message => "can't be blank"
   validates_presence_of   :title,               :message => "can't be blank"
   
+  liquid_methods  :id,
+                  :title,
+                  :square_source_url,
+                  :thumb_source_url,
+                  :medium_source_url,
+                  :fullsize_source_url,
+                  :previous,
+                  :next
+  
   def update_from_flickr
     self.attributes = self.attributes.merge(FlickrPhoto.new(self.flickr_id).attributes)
   end
@@ -21,7 +30,7 @@ class Photo < ActiveRecord::Base
   def next
     @next_photo ||= Photo.find(:first, :order => 'created_at ASC', :conditions => ['created_at > ?', created_at])
   end
-    
+  
   def self.new_from_flickr(flickr_photo)
     Photo.new do |photo|
       photo.flickr_id           = flickr_photo.id

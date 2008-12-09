@@ -1,2 +1,0 @@
-Photoblogr:
-- wrap all calls to flickr in begin and rescue blocks (logger.error in rescue)

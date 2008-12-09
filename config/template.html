@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <title>Flickr Portfolio</title>
+  </head>
+  <body>
+    <h1>{{ photo.title }}</h1>
+    <img src='{{ photo.medium_source_url }}' alt='{{ photo.title }}'/>
+    {% if photo.previous %}
+      <a href='/photos/{{ photo.previous.id }}'>previous</a>
+    {% endif %}
+    {% if photo.next %}
+      <p>there is a next photo</p>
+    {% endif %}
+  </body>
+</html>
