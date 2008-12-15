@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.1.0' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -25,8 +25,10 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
+  # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
+  # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'bj'
   config.gem 'validatable'
@@ -48,15 +50,20 @@ Rails::Initializer.run do |config|
 
   # Make Time.zone default to the specified zone, and make Active Record store time values
   # in the database in UTC, and return them converted to the specified local zone.
-  # Run "rake -D time" for a list of tasks for finding time zone names. Uncomment to use default local time.
+  # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
   config.time_zone = 'UTC'
+
+  # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
+  # All files from config/locales/*.rb,yml are added automatically.
+  # config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
+  # config.i18n.default_locale = :de
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_photoblogr_session',
+    :session_key => '_flickr-portfolio_session',
     :secret      => '405da06f95fe1ee78f504c4b3dce48772043031abe3d5ecb173a059b75c246c112afa40887b7697e1ad1db09c51452c03ef9e27273b59cd8d1d27c9d0a6d6168'
   }
 
@@ -71,5 +78,6 @@ Rails::Initializer.run do |config|
   # config.active_record.schema_format = :sql
 
   # Activate observers that should always be running
-  # config.active_record.observers = :cacher, :garbage_collector
+  # Please note that observers generated using script/generate observer need to have an _observer suffix
+  # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
 end
