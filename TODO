@@ -6,3 +6,5 @@
   from a sync using the previous tag.
   
 - need to verify that sync order is still correct (it looks like it is oldest first after a recent test)
+
+- max says make it browse flickr sets
