@@ -1,7 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :photos  
-  map.root      :controller => 'photos', :action => 'show'
   
+  map.root :controller => 'photos', :action => 'show'
+    
   map.namespace :admin do |admin|
     admin.resources :updates
     admin.resource  :settings
@@ -10,4 +11,6 @@ ActionController::Routing::Routes.draw do |map|
     admin.logout    '/logout', :controller => 'logins', :action => 'destroy'
     admin.root      :controller => 'updates', :action => 'index'
   end
+  
+  map.connect ':page', :controller => 'pages', :action => 'show'
 end
