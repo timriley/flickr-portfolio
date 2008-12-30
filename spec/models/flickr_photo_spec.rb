@@ -81,17 +81,17 @@ describe FlickrPhoto do
     
     it "should build new flickr photo objects for each photo returned from flickr" do
       FlickrPhoto.should_receive(:new).exactly(3).times
-      FlickrPhoto.find_all_by_user_and_tag('foo', 'bar')
+      FlickrPhoto.find_all(:user_id => 'foo', :tag => 'bar')
     end
     
     it "should return an empty array if no photos were found" do
       @photos_container.stub!(:search).and_return([])
-      FlickrPhoto.find_all_by_user_and_tag('foo', 'far').should == []
+      FlickrPhoto.find_all(:user_id => 'foo', :tag => 'bar').should == []
     end
     
     it "should pass on the exception from flickraw if the user is unknown" do
       @photos_container.stub!(:seach).and_raise
-      FlickrPhoto.find_all_by_user_and_tag('foo', 'bar').should raise_error
+      FlickrPhoto.find_all(:user_id => 'foo', :tag => 'bar').should raise_error
     end
     
     # it "should raise an exception if not contact flickr FIXME"

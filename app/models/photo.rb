@@ -22,11 +22,11 @@ class Photo < ActiveRecord::Base
                   :next
   
   def previous
-    @previous_photo ||= Photo.find(:first, :order => 'created_at DESC', :conditions => ['created_at < ?', created_at])
+    @previous_photo ||= Photo.first(:order => 'created_at DESC', :conditions => ['created_at < ?', created_at])
   end
   
   def next
-    @next_photo ||= Photo.find(:first, :order => 'created_at ASC', :conditions => ['created_at > ?', created_at])
+    @next_photo ||= Photo.first(:order => 'created_at ASC', :conditions => ['created_at > ?', created_at])
   end
   
   def update_from_flickr
@@ -58,42 +58,43 @@ class Photo < ActiveRecord::Base
     photo.save
     photo
   end
-
-  # def self.flickr_photos_by_user_and_tag(user_nsid, tag)
-    
-  # def self.flickr_photo_attributes(flickr_id)
   
-  # Only allow the following options:
-  # :user_id => user_id, :tag => tag
+  # Only allow the following options, :user_id => user_id, :tag => tag
   def self.sync_with_flickr(options = {})
     if options.empty?
       # TODO return an error because we need at least a :user or a :tag
     end
     
-    search_options = {}
-    search_options[:user_id]  = options[:user_id] unless options[:user_id].blank?
-    search_options[:tags]     = options[:tag]     unless options[:tag].blank?
+    transaction do
+      if options[:tag]
+        update_all('active = false', ['tag != ?', options[:tag]])
+      end
     
-    flickr_photos = FlickrPhoto.find_all(search_options)
-    local_photos  = Photo.all
+      search_options = {}
+      search_options[:user_id]  = options[:user_id] unless options[:user_id].blank?
+      search_options[:tags]     = options[:tag]     unless options[:tag].blank?
     
-    # sort all of the current photos by flickr id
-    local_photos_by_flickr_id = {}
-    local_photos.each do |photo|
-      local_photos_by_flickr_id[photo.flickr_id] = photo
-    end
+      flickr_photos = FlickrPhoto.find_all(search_options)
+      local_photos  = Photo.all
     
-    flickr_photos.each do |flickr_photo|
-      if local_photo = local_photos_by_flickr_id[flickr_photo.id]
-        # we've imported the photo before, update it from flickr if it is stale
-        if local_photo.flickr_updated_at.to_i < flickr_photo.flickr_updated_at.to_i
-          local_photo.update_from_flickr
-          # local_photo.attributes.merge(flickr_photo.attributes)
-          local_photo.save
+      # sort all of the current photos by flickr id
+      local_photos_by_flickr_id = {}
+      local_photos.each do |photo|
+        local_photos_by_flickr_id[photo.flickr_id] = photo
+      end
+    
+      flickr_photos.each do |flickr_photo|
+        if local_photo = local_photos_by_flickr_id[flickr_photo.id]
+          # we've imported the photo before, update it from flickr if it is stale
+          if local_photo.flickr_updated_at.to_i < flickr_photo.flickr_updated_at.to_i
+            local_photo.update_from_flickr
+            # local_photo.attributes.merge(flickr_photo.attributes)
+            local_photo.save
+          end
+        else
+          # if the photo does not exist locally, create it.
+          Photo.create_from_flickr_photo(flickr_photo)
         end
-      else
-        # if the photo does not exist locally, create it.
-        Photo.create_from_flickr_photo(flickr_photo)
       end
     end
   end  
