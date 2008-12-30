@@ -127,7 +127,7 @@ describe Photo do
     
     describe "and initialializing" do
       before(:each) do
-        @photo = Photo.new_from_flickr(@flickr_photo)
+        @photo = Photo.new_from_flickr_photo(@flickr_photo)
       end      
       
       it_should_behave_like "a photo matching a flickr photo"
@@ -135,7 +135,7 @@ describe Photo do
     
     describe "and creating" do
       before(:each) do
-        @photo = Photo.create_from_flickr(@flickr_photo)
+        @photo = Photo.create_from_flickr_photo(@flickr_photo)
       end
       
       it_should_behave_like "a photo matching a flickr photo"
@@ -186,7 +186,7 @@ describe Photo do
       Photo.stub!(:find).with(:all).and_return([@photo])
       @flickr_photo = mock(FlickrPhoto, :id => '123')
       stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))
-      FlickrPhoto.stub!(:find_all_by_user_and_tag).and_return([@flickr_photo])
+      FlickrPhoto.stub!(:find_all).and_return([@flickr_photo])
       FlickrPhoto.stub!(:new).with(@flickr_photo.id).and_return(@flickr_photo)
     end
     
@@ -194,7 +194,7 @@ describe Photo do
       it "should do nothing" do
         @local_photo_1.should_receive(:save).exactly(0).times
         @local_photo_2.should_receive(:save).exactly(0).times
-        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+        Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
       end
     end
     
@@ -207,19 +207,19 @@ describe Photo do
       it "should update any values that are altered in the flickr photo" do
         @photo.stub!(:save).and_return(true)
         lambda {
-          Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+          Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
         }.should change(@photo, :description).from('previous desc').to(@flickr_photo.description)
       end
       
       it "should update the photo from flickr" do
         @photo.stub!(:save).and_return(true)
         @photo.should_receive(:update_from_flickr)
-        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+        Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
       end
       
       it "should save the photo" do
         @photo.should_receive(:save)
-        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+        Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
       end
     end
 
@@ -227,12 +227,12 @@ describe Photo do
       before(:each) do
         @new_flickr_photo = mock(FlickrPhoto, :id => '456')
         stub_attributes(@new_flickr_photo, flickr_photo_attributes)
-        FlickrPhoto.stub!(:find_all_by_user_and_tag).and_return([@new_flickr_photo, @flickr_photo])
+        FlickrPhoto.stub!(:find_all).and_return([@new_flickr_photo, @flickr_photo])
       end
       
       it "should create the new photos from flickr" do
-        Photo.should_receive(:create_from_flickr).with(@new_flickr_photo)
-        Photo.sync_with_flickr_by_user_and_tag('foo', 'bar')
+        Photo.should_receive(:create_from_flickr_photo).with(@new_flickr_photo)
+        Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
       end
     end
   end

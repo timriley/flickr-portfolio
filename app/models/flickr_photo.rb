@@ -41,11 +41,16 @@ class FlickrPhoto
   def fullsize_source_url
     attributes[:fullsize_source_url]
   end
-  
-  def self.find_all_by_user_and_tag(user_nsid, tag)
-    flickr.photos.search(:user_id => user_nsid, :tags => tag, :sort => 'date-posted-desc').collect { |photo| FlickrPhoto.new(photo.id) }
+
+  # :user_id => user_nsid, :tags => tag
+  def self.find_all(options)
+    if !options.empty?
+      flickr.photos.search({:sort => 'date-posted-desc'}.merge(options)).collect { |photo| new(photo.id) }
+    else
+      # TODO return error because we can't have optionless searches
+    end
   end
-  
+    
   protected
   
   def get_attributes
