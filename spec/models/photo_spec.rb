@@ -8,22 +8,24 @@ module PhotoSpecHelper
      :square_source_url   => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_s.jpg',
      :thumb_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
      :medium_source_url   => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
-     :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg'
+     :fullsize_source_url => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_o.jpg',
+     :flickr_posted_at    => 95.days.ago.beginning_of_day,
+     :flickr_updated_at   => 90.days.ago.beginning_of_day
     }
   end
   def all_photo_attributes
-    {
+    valid_photo_attributes.merge({
       :description        => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
       :taken_at           => 100.days.ago.beginning_of_day,
-      :flickr_updated_at  => 99.days.ago.beginning_of_day
-    }.merge(valid_photo_attributes)
+    })
   end
   def flickr_photo_attributes
     {
       :title                => 'Hey',
       :description          => 'Some people',
       :taken_at             => 10.days.ago.beginning_of_day,
-      :flickr_updated_at    => 9.days.ago.beginning_of_day,
+      :flickr_posted_at     => 9.days.ago.beginning_of_day,
+      :flickr_updated_at    => 8.days.ago.beginning_of_day,
       :square_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_s.jpg',
       :thumb_source_url     => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb_t.jpg',
       :medium_source_url    => 'http://farm1.static.flickr.com/134/325946210_3d6af571cb.jpg',
@@ -74,6 +76,67 @@ describe Photo, "in general" do
     @photo.attributes = valid_photo_attributes.except(:title)
     @photo.should_not be_valid
     @photo.should have(1).errors
+  end
+end
+
+# Struggling with style here. Not sure how to test this properly without hitting the DB.
+describe Photo, "with neighbours" do
+  include PhotoSpecHelper
+  
+  before(:each) do
+    @photos = {}
+    
+    1.upto(5) do |i|
+      @photos[i] = Photo.create!(valid_photo_attributes.with(:active => true, :flickr_id => i, :flickr_posted_at => Time.now + i.days))
+    end
+  end
+  
+  # Previous
+  
+  it "should have a previous photo if there is a photo with an earlier flickr posted date" do
+    @photos[2].previous.should == @photos[1]
+  end
+  
+  it "should have a previous photo only when a photo with an earlier flickr posted date is active" do
+    @photos[2].update_attribute(:active, false)
+    @photos[3].previous.should == @photos[1]
+  end
+  
+  it "should have a previous photo with the closest date out of all active posted photos with earlier flickr posted dates" do
+    @photos[4].previous.should == @photos[3]
+  end
+  
+  it "should not have a previous photo if there are photos with earlier flickr posted dates but none of them are active" do
+    @photos[1].update_attribute(:active, false)
+    @photos[2].previous.should be_nil
+  end
+  
+  it "should not have a previous photo if there is no photo with an earlier flickr posted date" do
+    @photos[1].previous.should be_nil
+  end
+  
+  # Next
+  
+  it "should have a next photo if there is a photo with a later flickr posted date" do
+    @photos[4].next.should == @photos[5]
+  end
+  
+  it "should have a next photo only when a photo with a later flickr posted date is active" do
+    @photos[4].update_attribute(:active, false)
+    @photos[3].next.should == @photos[5]
+  end
+  
+  it "should have a next photo with the closest date out of all active photos with later flickr posted dates" do
+    @photos[1].next.should == @photos[2]
+  end
+  
+  it "should not have a next photo if there are photos with later flickr posted dates but none of them are active" do
+    @photos[5].update_attribute(:active, false)
+    @photos[4].next.should be_nil
+  end
+  
+  it "should not have a next photo if there is no photo with a later flickr posted date" do
+    @photos[5].next.should be_nil
   end
 end
 
@@ -184,7 +247,7 @@ describe Photo, "when synchronising with flickr" do
   include PhotoSpecHelper
   
   before(:each) do
-    @photo = Photo.new(flickr_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
+    @photo = Photo.new(valid_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
         
     @flickr_photo = mock(FlickrPhoto, :id => '123')
     stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))

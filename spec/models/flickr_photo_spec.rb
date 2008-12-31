@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe FlickrPhoto do
   describe "created with a flickr id" do
     before(:each) do
-      @flickr_dates      = mock('flickr dates', :taken => "2006-11-12 15: 05: 00",  :lastupdate => "1207365225")
+      @flickr_dates      = mock('flickr dates', :taken => "2006-11-12 15: 05: 00", :lastupdate => "1207365225", :posted => "1207364225")
       @flickr_info       = mock('flickr info',          :title => 'Dinner',         :description => 'Tuna Pizza', :dates => @flickr_dates)
       @flickr_url_thumb  = mock('flickr thumb url',     :label => 'Thumbnail',      :source => 'http://flickr.com/thumbnail')
       @flickr_url_med    = mock('flickr medium url',    :label => 'Medium',         :source => 'http://flickr.com/medium')

@@ -26,6 +26,9 @@ class FlickrPhoto
   def taken_at
     attributes[:taken_at]
   end
+  def flickr_posted_at
+    attributes[:flickr_posted_at]
+  end
   def flickr_updated_at
     attributes[:flickr_updated_at]
   end
@@ -62,6 +65,7 @@ class FlickrPhoto
     attrs[:title]             = info.title
     attrs[:description]       = info.description
     attrs[:taken_at]          = info.dates.taken ? Time.parse(info.dates.taken) : nil # not everything has exif data
+    attrs[:flickr_posted_at]  = Time.at(info.dates.posted.to_i)
     # FIXME wrap lastupdate in time.parse?
     attrs[:flickr_updated_at] = Time.at(info.dates.lastupdate.to_i)
     

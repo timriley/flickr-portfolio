@@ -1,16 +1,19 @@
 class Photo < ActiveRecord::Base
-  
+
+  named_scope :active,  :conditions => { :active => true }
   named_scope :with_tag, lambda { |tag| { :conditions => ['tag = ?', tag] } }
   
   acts_as_audited
 
   validates_uniqueness_of :flickr_id
   validates_presence_of   :flickr_id,           :message => "can't be blank"
+  validates_presence_of   :title,               :message => "can't be blank"
   validates_presence_of   :square_source_url,   :message => "can't be blank"
   validates_presence_of   :thumb_source_url,    :message => "can't be blank"
   validates_presence_of   :medium_source_url,   :message => "can't be blank"
   validates_presence_of   :fullsize_source_url, :message => "can't be blank"
-  validates_presence_of   :title,               :message => "can't be blank"
+  validates_presence_of   :flickr_posted_at,    :message => "can't be blank" # this is used for photo ordering
+  validates_presence_of   :flickr_updated_at,   :message => "can't be blank" # needed for syncing
   
   liquid_methods  :id,
                   :title,
@@ -22,11 +25,11 @@ class Photo < ActiveRecord::Base
                   :next
   
   def previous
-    @previous_photo ||= Photo.first(:order => 'created_at DESC', :conditions => ['created_at < ?', created_at])
+    @previous_photo ||= Photo.active.first(:order => 'flickr_posted_at DESC, id DESC', :conditions => ['flickr_posted_at < ?', flickr_posted_at])
   end
   
   def next
-    @next_photo ||= Photo.first(:order => 'created_at ASC', :conditions => ['created_at > ?', created_at])
+    @next_photo ||= Photo.active.first(:order => 'flickr_posted_at ASC, id ASC', :conditions => ['flickr_posted_at > ?', flickr_posted_at])
   end
   
   def update_from_flickr
@@ -41,22 +44,23 @@ class Photo < ActiveRecord::Base
   
   def self.new_from_flickr_photo(flickr_photo)
     Photo.new do |photo|
-      photo.flickr_id           = flickr_photo.id
+      photo.flickr_id           = flickr_photo.id                   # Basic info
       photo.title               = flickr_photo.title
       photo.description         = flickr_photo.description
-      photo.taken_at            = flickr_photo.taken_at
-      photo.flickr_updated_at   = flickr_photo.flickr_updated_at
-      photo.square_source_url   = flickr_photo.square_source_url
+      photo.square_source_url   = flickr_photo.square_source_url    # URLs
       photo.thumb_source_url    = flickr_photo.thumb_source_url
       photo.medium_source_url   = flickr_photo.medium_source_url
       photo.fullsize_source_url = flickr_photo.fullsize_source_url
+      photo.taken_at            = flickr_photo.taken_at             # Dates
+      photo.flickr_posted_at    = flickr_photo.flickr_posted_at
+      photo.flickr_updated_at   = flickr_photo.flickr_updated_at 
     end
   end
   
   def self.create_from_flickr_photo(flickr_photo)
-    photo = Photo.new_from_flickr_photo(flickr_photo)
-    photo.save
-    photo
+    returning Photo.new_from_flickr_photo(flickr_photo) do |photo|
+      photo.save
+    end
   end
   
   # Only allow the following options, :user_id => user_id, :tag => tag
