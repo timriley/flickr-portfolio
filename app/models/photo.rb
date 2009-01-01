@@ -90,11 +90,8 @@ class Photo < ActiveRecord::Base
       flickr_photos.each do |flickr_photo|
         if local_photo = local_photos_by_flickr_id[flickr_photo.id]
           # we've imported the photo before, update it from flickr if it is stale
-          if local_photo.flickr_updated_at.to_i < flickr_photo.flickr_updated_at.to_i
-            local_photo.update_from_flickr
-            # local_photo.attributes.merge(flickr_photo.attributes)
-            local_photo.save
-          end
+          local_photo.update_from_flickr_photo(flickr_photo)
+          local_photo.save if local_photo.changed?
         else
           # if the photo does not exist locally, create it.
           Photo.create_from_flickr_photo(flickr_photo)
