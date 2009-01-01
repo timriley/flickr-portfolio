@@ -281,12 +281,6 @@ describe Photo, "when synchronising with flickr" do
       }.should change(@photo, :description).from('previous desc').to(@flickr_photo.description)
     end
     
-    it "should update the photo from flickr" do
-      @photo.stub!(:save).and_return(true)
-      @photo.should_receive(:update_from_flickr)
-      Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
-    end
-    
     it "should save the photo" do
       @photo.should_receive(:save)
       Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
