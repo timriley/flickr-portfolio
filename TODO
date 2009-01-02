@@ -8,3 +8,5 @@
 - need to verify that sync order is still correct (it looks like it is oldest first after a recent test)
 
 - max says make it browse flickr sets
+
+- make the error page look consistent with the rest of the app's theme (this should perhaps work with the wildcard route and the pages controller?)

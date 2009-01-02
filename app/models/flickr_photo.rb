@@ -13,7 +13,7 @@ class FlickrPhoto
   # and the attributes are retrieved from flickr.
   # Idea! Will probably need to dynamically generate all of those accessor methods to
   # achieve the above.
-    
+      
   def id
     @id
   end
@@ -45,13 +45,9 @@ class FlickrPhoto
     attributes[:fullsize_source_url]
   end
 
-  # :user_id => user_nsid, :tags => tag
+  # {:user_id => 'user_nsid', :tags => "tag1, tag2, tag3"}
   def self.find_all(options)
-    if !options.empty?
-      flickr.photos.search({:sort => 'date-posted-desc'}.merge(options)).collect { |photo| new(photo.id) }
-    else
-      # TODO return error because we can't have optionless searches
-    end
+    flickr.photos.search({:sort => 'date-posted-desc', :tag_mode => 'any'}.merge(options)).collect { |photo| new(photo.id) }
   end
     
   protected
@@ -66,7 +62,6 @@ class FlickrPhoto
     attrs[:description]       = info.description
     attrs[:taken_at]          = info.dates.taken ? Time.parse(info.dates.taken) : nil # not everything has exif data
     attrs[:flickr_posted_at]  = Time.at(info.dates.posted.to_i)
-    # FIXME wrap lastupdate in time.parse?
     attrs[:flickr_updated_at] = Time.at(info.dates.lastupdate.to_i)
     
     urls.each do |u|

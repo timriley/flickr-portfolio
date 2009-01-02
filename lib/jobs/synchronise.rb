@@ -4,4 +4,5 @@ rescue
   # FIXME log an error when sync fails
   true
 end
+
 Bj.submit "./script/runner ./lib/jobs/synchronise.rb", :submitted_at => 20.minutes.from_now

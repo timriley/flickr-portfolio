@@ -1,6 +1,5 @@
 class Admin::LoginsController < Admin::AdminController
   skip_before_filter :login_required, :only => [:new, :create]
-  layout 'admin_wrapper'
   
   def new
   end

@@ -1,7 +1,7 @@
 class Photo < ActiveRecord::Base
 
-  named_scope :active,  :conditions => { :active => true }
-  named_scope :with_tag, lambda { |tag| { :conditions => ['tag = ?', tag] } }
+  named_scope :active,    :conditions => { :active => true }
+  named_scope :inactive,  :conditions => { :active => false }
   
   acts_as_audited
 
@@ -15,14 +15,24 @@ class Photo < ActiveRecord::Base
   validates_presence_of   :flickr_posted_at,    :message => "can't be blank" # this is used for photo ordering
   validates_presence_of   :flickr_updated_at,   :message => "can't be blank" # needed for syncing
   
-  liquid_methods  :id,
-                  :title,
-                  :square_source_url,
-                  :thumb_source_url,
-                  :medium_source_url,
-                  :fullsize_source_url,
-                  :previous,
-                  :next
+  def to_param
+    flickr_id
+  end
+  
+  def to_liquid
+    { 'id'                  => self.flickr_id,
+      'title'               => self.title,
+      'square_source_url'   => self.square_source_url,
+      'thumb_source_url'    => self.thumb_source_url,
+      'medium_source_url'   => self.medium_source_url,
+      'fullsize_source_url' => self.fullsize_source_url,
+      'previous'            => self.previous,
+      'next'                => self.next }
+  end
+  
+  def self.latest
+    active.first(:order => 'flickr_posted_at DESC, id DESC')
+  end
   
   def previous
     @previous_photo ||= Photo.active.first(:order => 'flickr_posted_at DESC, id DESC', :conditions => ['flickr_posted_at < ?', flickr_posted_at])
@@ -32,28 +42,28 @@ class Photo < ActiveRecord::Base
     @next_photo ||= Photo.active.first(:order => 'flickr_posted_at ASC, id ASC', :conditions => ['flickr_posted_at > ?', flickr_posted_at])
   end
   
+  def new_from_flickr?
+    !synced_with?
+  end
+  
   def update_from_flickr
-    self.attributes = self.attributes.merge(FlickrPhoto.new(self.flickr_id).attributes)
+    merge_attributes_from_flickr_photo(FlickrPhoto.new(flickr_id))
+  end
+  
+  def merge_attributes_from_flickr_photo(flickr_photo)
+    self.flickr_id = flickr_photo.id
+    self.attributes = self.attributes.merge(flickr_photo.attributes)        
   end
   
   def update_from_flickr_photo(flickr_photo)
     if flickr_updated_at.to_i < flickr_photo.flickr_updated_at.to_i
-      self.attributes = self.attributes.merge(flickr_photo.attributes)
+      merge_attributes_from_flickr_photo(flickr_photo)
     end
   end
   
   def self.new_from_flickr_photo(flickr_photo)
     Photo.new do |photo|
-      photo.flickr_id           = flickr_photo.id                   # Basic info
-      photo.title               = flickr_photo.title
-      photo.description         = flickr_photo.description
-      photo.square_source_url   = flickr_photo.square_source_url    # URLs
-      photo.thumb_source_url    = flickr_photo.thumb_source_url
-      photo.medium_source_url   = flickr_photo.medium_source_url
-      photo.fullsize_source_url = flickr_photo.fullsize_source_url
-      photo.taken_at            = flickr_photo.taken_at             # Dates
-      photo.flickr_posted_at    = flickr_photo.flickr_posted_at
-      photo.flickr_updated_at   = flickr_photo.flickr_updated_at 
+      photo.merge_attributes_from_flickr_photo(flickr_photo)
     end
   end
   
@@ -63,40 +73,34 @@ class Photo < ActiveRecord::Base
     end
   end
   
-  # Only allow the following options, :user_id => user_id, :tag => tag
-  def self.sync_with_flickr(options = {})
-    if options.empty?
-      # TODO return an error because we need at least a :user or a :tag
+  def self.create_or_update_from_flickr_photo(flickr_photo)
+    if photo = find_by_flickr_id(flickr_photo.id)
+      photo.update_from_flickr_photo(flickr_photo)
+      photo.save if photo.changed?
+    else
+      create_from_flickr_photo(flickr_photo)
     end
-    
+  end
+  
+  # Use these options - {:user_id => 'user_id', :tags => 'tags'}
+  def self.sync_with_flickr(options)
     transaction do
-      if options[:tag]
-        update_all('active = false', ['tag != ?', options[:tag]])
-      end
-    
-      search_options = {}
-      search_options[:user_id]  = options[:user_id] unless options[:user_id].blank?
-      search_options[:tags]     = options[:tag]     unless options[:tag].blank?
-    
-      flickr_photos = FlickrPhoto.find_all(search_options)
-      local_photos  = Photo.all
-    
-      # sort all of the current photos by flickr id
-      local_photos_by_flickr_id = {}
-      local_photos.each do |photo|
-        local_photos_by_flickr_id[photo.flickr_id] = photo
-      end
-    
-      flickr_photos.each do |flickr_photo|
-        if local_photo = local_photos_by_flickr_id[flickr_photo.id]
-          # we've imported the photo before, update it from flickr if it is stale
-          local_photo.update_from_flickr_photo(flickr_photo)
-          local_photo.save if local_photo.changed?
-        else
-          # if the photo does not exist locally, create it.
-          Photo.create_from_flickr_photo(flickr_photo)
-        end
+      delete_for_sync(options)
+      
+      FlickrPhoto.find_all(options).each do |p|
+        photo = create_or_update_from_flickr_photo(p)
+        photo.update_attribute(:synced_with, sync_options_to_s(options)) if photo.new_from_flickr?
       end
     end
-  end  
+  end
+  
+  private
+  
+  def self.delete_for_sync(options)
+    delete_all(["synced_with != ?", sync_options_to_s(options)])
+  end
+  
+  def self.sync_options_to_s(options)
+    "#{options[:user_id]}|#{options[:tags]}"
+  end
 end

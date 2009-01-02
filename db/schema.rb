@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081231022531) do
+ActiveRecord::Schema.define(:version => 20090102120632) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -86,10 +86,12 @@ ActiveRecord::Schema.define(:version => 20081231022531) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "square_source_url"
-    t.string   "tag"
     t.datetime "flickr_posted_at"
+    t.string   "synced_with"
   end
 
-  add_index "photos", ["tag"], :name => "index_photos_on_tag"
+  add_index "photos", ["active"], :name => "index_photos_on_active"
+  add_index "photos", ["flickr_posted_at"], :name => "index_photos_on_flickr_posted_at"
+  add_index "photos", ["synced_with"], :name => "index_photos_on_synced_with"
 
 end
