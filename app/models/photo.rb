@@ -2,8 +2,6 @@ class Photo < ActiveRecord::Base
 
   named_scope :active,    :conditions => { :active => true }
   named_scope :inactive,  :conditions => { :active => false }
-  
-  acts_as_audited
 
   validates_uniqueness_of :flickr_id
   validates_presence_of   :flickr_id,           :message => "can't be blank"

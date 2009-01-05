@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource  :theme
     admin.resource  :login
     admin.logout    '/logout', :controller => 'logins', :action => 'destroy'
-    admin.root      :controller => 'updates', :action => 'index'
+    admin.root      :controller => 'settings', :action => 'show'
   end
   
   map.connect ':page', :controller => 'pages', :action => 'show'

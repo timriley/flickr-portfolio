@@ -1,6 +1,0 @@
-%table#live_table{:cellspacing => 0}
-  %tbody
-    = render :partial => 'audit', :collection => @audits
-  %tfoot
-    %tr.pagination
-      %td{:colspan => '2'}= will_paginate @audits
