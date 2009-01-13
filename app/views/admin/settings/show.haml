@@ -5,15 +5,15 @@
   %p
     = f.label :flickr_user_id, 'Flickr user ID'
     %br
-    = f.text_field :flickr_user_id
+    = f.text_field :flickr_user_id, :class => 'title'
   %p
     = f.label :synchronise_tag, 'Flickr photo tag'
     %br
-    = f.text_field :synchronise_tag
+    = f.text_field :synchronise_tag, :class => 'title'
   %p
     = f.label :password, 'Admin password'
     %br
-    = f.password_field :password
+    = f.password_field :password, :class => 'title'
     
   %p
     = f.submit 'Save'
