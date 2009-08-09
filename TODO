@@ -1,3 +1,5 @@
+- append the name of the flickr photo in slug-form to the end of the photo/show links (params[:id].to_i strips it out in effect anyway)
+
 - wrap all calls to flickr in begin and rescue blocks (logger.error in rescue)
 
 - liquid layout-fu:
@@ -10,3 +12,4 @@
 - max says make it browse flickr sets
 
 - make the error page look consistent with the rest of the app's theme (this should perhaps work with the wildcard route and the pages controller?)
+

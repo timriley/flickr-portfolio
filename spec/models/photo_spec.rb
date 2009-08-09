@@ -15,7 +15,7 @@ module PhotoSpecHelper
   end
   def all_photo_attributes
     valid_photo_attributes.merge({
-      :description        => "I hunkered down every night in the library for four weeks to write my last essay.  It was about wheether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
+      :description        => "I hunkered down every night in the library for four weeks to write my last essay.  It was about whether J. S. Mill, for his utilitarianism, can be criticised as an advocate of individualism.",
       :taken_at           => 100.days.ago.beginning_of_day,
     })
   end
@@ -76,6 +76,11 @@ describe Photo, "in general" do
     @photo.attributes = valid_photo_attributes.except(:title)
     @photo.should_not be_valid
     @photo.should have(1).errors
+  end
+  
+  it "should be active when created" do
+    # @photo = Photo.new(valid_photo_attributes).save!
+    @photo.should be_active
   end
 end
 
@@ -140,175 +145,147 @@ describe Photo, "with neighbours" do
   end
 end
 
-describe Photo, "when creating" do
-  include PhotoSpecHelper
-  
-  before(:each) do
-    @photo = Photo.new(valid_photo_attributes)
-    @photo.save!
+describe "a photo matching a flickr photo", :shared => true do
+  it "should have a flickr_id matching the flickr photo's id" do
+    @photo.flickr_id.should == @flickr_photo.id
   end
 
-  it "should be active when created" do
-    @photo.should be_active    
+  it "should have a title matching the flickr photo's title" do
+    @photo.title.should == @flickr_photo.title
+  end
+
+  it "should have a description matching the flickr photo's description" do
+    @photo.description.should == @flickr_photo.description
+  end
+
+  it "should have a flickr_updated_at timestamp matching the flickr photo's updated_at" do
+    @photo.flickr_updated_at.should == @flickr_photo.flickr_updated_at
   end
   
-  describe "when creating from a flickr photo" do
-    before(:each) do
-      @flickr_photo = mock(FlickrPhoto, :id => '12345')
-      stub_attributes(@flickr_photo, flickr_photo_attributes)
-    end
-    
-    describe "and initialializing" do
-      before(:each) do
-        @photo = Photo.new_from_flickr_photo(@flickr_photo)
-      end      
-      
-      describe "a photo matching a flickr photo", :shared => true do
-        it "should have a flickr_id matching the flickr photo's id" do
-          @photo.flickr_id.should == @flickr_photo.id
-        end
+  it "should have a flickr_posted_at timestamp matching the flickr photo's flickr_posted_at" do
+    @photo.flickr_posted_at.should == @flickr_photo.flickr_posted_at
+  end
 
-        it "should have a title matching the flickr photo's title" do
-          @photo.title.should == @flickr_photo.title
-        end
+  it "should have a thumbnail source url matching the flickr photo's thumbnail source url" do
+    @photo.thumb_source_url.should == @flickr_photo.thumb_source_url
+  end
 
-        it "should have a description matching the flickr photo's description" do
-          @photo.description.should == @flickr_photo.description
-        end
+  it "should have a medium source url matching the flickr photo's medium source url" do
+    @photo.medium_source_url.should == @flickr_photo.medium_source_url
+  end
 
-        it "should have a flickr_updated_at timestamp matching the flickr photo's updated_at" do
-          @photo.flickr_updated_at.should == @flickr_photo.flickr_updated_at
-        end
-
-        it "should have a thumbnail source url matching the flickr photo's thumbnail source url" do
-          @photo.thumb_source_url.should == @flickr_photo.thumb_source_url
-        end
-
-        it "should have a medium source url matching the flickr photo's medium source url" do
-          @photo.medium_source_url.should == @flickr_photo.medium_source_url
-        end
-
-        it "should have a fullsize source url matching the flickr photo's fullsize source url" do
-          @photo.fullsize_source_url.should == @flickr_photo.fullsize_source_url
-        end
-      end
-    end
-    
-    describe "and creating" do
-      before(:each) do
-        @photo = Photo.create_from_flickr_photo(@flickr_photo)
-      end
-      
-      it_should_behave_like "a photo matching a flickr photo"
-    end
+  it "should have a fullsize source url matching the flickr photo's fullsize source url" do
+    @photo.fullsize_source_url.should == @flickr_photo.fullsize_source_url
   end
 end
-    
-describe Photo, "when updating from flickr" do
+
+describe Photo, "when initializing from a flickr photo" do
   include PhotoSpecHelper
   
   before(:each) do
-    @photo = Photo.new(all_photo_attributes.with(:flickr_id => '12345'))
     @flickr_photo = mock(FlickrPhoto, :id => '12345')
     stub_attributes(@flickr_photo, flickr_photo_attributes)
+    
+    @photo = Photo.new_from_flickr_photo(@flickr_photo)
   end
   
-  describe "before the update" do
-    it "should have a flickr_id matching the flickr photo's id" do
-      @photo.flickr_id.should == @flickr_photo.id
-    end
-    
-    it "should have a title that does not match the flickr photo's title" do
-      @photo.title.should_not == @flickr_photo.title
-    end
-    
-    it "should have a description that does not match the flickr photo's description" do
-      @photo.description.should_not == @flickr_photo.description
-    end
-    
-    it "should have source urls that match the flickr photo's source urls" do
-      @photo.thumb_source_url.should    == @flickr_photo.thumb_source_url
-      @photo.medium_source_url.should   == @flickr_photo.medium_source_url
-      @photo.fullsize_source_url.should == @flickr_photo.fullsize_source_url
-    end
+  it "should be new from flickr" do
+    @photo.should be_new_from_flickr
   end
   
-  describe "after the update" do
-    before(:each) do
-      FlickrPhoto.stub!(:new).and_return(@flickr_photo)
-      @photo.update_from_flickr
-    end
-    
-    it_should_behave_like "a photo matching a flickr photo"
-  end
+  it_should_behave_like "a photo matching a flickr photo"
 end
+
+# describe Photo, "when updating from flickr" do
 
 describe Photo, "when synchronising with flickr" do
   include PhotoSpecHelper
   
-  before(:each) do
-    @photo = Photo.new(valid_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
-        
-    @flickr_photo = mock(FlickrPhoto, :id => '123')
-    stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))
-    
-    FlickrPhoto.stub!(:find_all).and_return([@flickr_photo])
-    FlickrPhoto.stub!(:new).with(@flickr_photo.id).and_return(@flickr_photo)
-  end
+  # before(:each) do
+  #   @photo = Photo.new(valid_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
+  #       
+  #   @flickr_photo = mock(FlickrPhoto, :id => '123')
+  #   stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))
+  #   
+  #   FlickrPhoto.stub!(:find_all).and_return([@flickr_photo])
+  #   FlickrPhoto.stub!(:new).with(@flickr_photo.id).and_return(@flickr_photo)
+  # end
   
-  describe "and the photos are all up to date" do
+  # describe "and there are no new photos on flickr" do
+  #   it "do nothing" do
+  #     @photo = mock_model(Photo, valid_photo_attributes.with(:flickr_id => '123', :flickr_updated_at => 2.days.ago.beginning_of_day))
+  #     Photo.stub!(:find_by_flickr_id).and_return(@photo)
+  #     
+  #     @flickr_photo = mock(FlickrPhoto, :id => '123')
+  #     stub_attributes(@flickr_photo, flickr_photo_attributes.with(:flickr_updated_at => 2.days.ago.beginning_of_day))
+  #     FlickrPhoto.stub!(:find_all).and_return([@flickr_photo])
+  #     
+  #     @photo.should_receive(:save).exactly(0).times
+  #     
+  #     Photo.sync_with_flickr(:user_id => 'foo', :tags => 'bar')
+  #   end
+  # end
+  
+  describe "and new photos have been posted to flickr" do
     before(:each) do
-      Photo.stub!(:find).with(:all).and_return([@photo])
+      Photo.stub!(:find_by_flickr_id).and_return(nil)
     end
     
-    it "should do nothing" do
-      Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
-      @photo.should_receive(:save).exactly(0).times
-    end
-  end
-  
-  describe "and the attributes of previous photos have been updated on flickr" do
-    before(:each) do
-      Photo.stub!(:find).with(:all).and_return([@photo])
-      @photo.description = 'previous desc'
-      @photo.flickr_updated_at -= 1.day
+    it "should create " do
+      
     end
     
-    it "should update any values that are altered in the flickr photo" do
-      @photo.stub!(:save).and_return(true)
-      lambda {
-        Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
-      }.should change(@photo, :description).from('previous desc').to(@flickr_photo.description)
-    end
-    
-    it "should save the photo" do
-      @photo.should_receive(:save)
-      Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
-    end
-  end
-
-  describe "and new photos have been posted to flickr", :shared => true do
-    before(:each) do
-      Photo.stub!(:find).with(:all).and_return([@photo])
-      @new_flickr_photo = mock(FlickrPhoto, :id => '456')
-      stub_attributes(@new_flickr_photo, flickr_photo_attributes)
-      FlickrPhoto.stub!(:find_all).and_return([@new_flickr_photo, @flickr_photo])
-    end
-    
-    it "should create the new photos from flickr" do
-      Photo.should_receive(:create_from_flickr_photo).with(@new_flickr_photo)
-      Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
-    end
-  end
-  
-  describe "and using a different flickr tag" do
-    it "should deactivate photos with other tags" do
-      @old_photo = Photo.create(valid_photo_attributes.with({:tag => 'old_tag', :active => true}))
-      Photo.sync_with_flickr(:user_id => 'foo', :tag => 'new_tag')
-      @old_photo.reload
-      @old_photo.should_not be_active
-    end
-  
-    # it_should_behave_like "and new photos have been posted to flickr"
-  end
+  # 
+  # 
+  # 
+  # it "should do nothing when all the photos are up to date" do
+  #   Photo.stub!(:find_by_flickr_id).and_return(@photo)
+  #   Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
+  #   @photo.should_receive(:save).exactly(0).times
+  # end
+  # 
+  # describe "and the attributes of previous photos have been updated on flickr" do
+  #   before(:each) do
+  #     Photo.stub!(:find_by_flickr_id).and_return(@photo)
+  #     @photo.description = 'previous desc'
+  #     @photo.flickr_updated_at -= 1.day
+  #   end
+  #   
+  #   it "should update any values that are altered in the flickr photo" do
+  #     @photo.stub!(:save).and_return(true)
+  #     lambda {
+  #       Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
+  #     }.should change(@photo, :description).from('previous desc').to(@flickr_photo.description)
+  #   end
+  #   
+  #   it "should save the photo" do
+  #     @photo.should_receive(:save)
+  #     Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
+  #   end
+  # end
+  # 
+  # describe "and new photos have been posted to flickr", :shared => true do
+  #   before(:each) do
+  #     Photo.stub!(:find).with(:all).and_return([@photo])
+  #     @new_flickr_photo = mock(FlickrPhoto, :id => '456')
+  #     stub_attributes(@new_flickr_photo, flickr_photo_attributes)
+  #     FlickrPhoto.stub!(:find_all).and_return([@new_flickr_photo, @flickr_photo])
+  #   end
+  #   
+  #   it "should create the new photos from flickr" do
+  #     Photo.should_receive(:create_from_flickr_photo).with(@new_flickr_photo)
+  #     Photo.sync_with_flickr(:user_id => 'foo', :tag => 'bar')
+  #   end
+  # end
+  # 
+  # describe "and using a different flickr tag" do
+  #   it "should deactivate photos with other tags" do
+  #     @old_photo = Photo.create(valid_photo_attributes.with({:tag => 'old_tag', :active => true}))
+  #     Photo.sync_with_flickr(:user_id => 'foo', :tag => 'new_tag')
+  #     @old_photo.reload
+  #     @old_photo.should_not be_active
+  #   end
+  # 
+  #   # it_should_behave_like "and new photos have been posted to flickr"
+  # end
 end
