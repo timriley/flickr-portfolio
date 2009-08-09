@@ -1,0 +1,13 @@
+%h1 Photos
+
+%h2 Recent
+%ul
+  - for photo in @recent_photos
+    %li
+      %a{:href => flickr_url(photo)}= flickr_square(photo)
+
+%h2 Featured
+%ul
+  - for photo in @feature_photos
+    %li
+      %a{:href => photo_path(photo)}= flickr_square(photo)

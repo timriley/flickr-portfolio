@@ -1,0 +1,36 @@
+- title = (@photo/:title).text.strip
+- title = "Untitled" if title.length == 0
+- @page_title = "#{title}"
+
+- photo_size = @sizes.find {|s| s[:label] == "Large"} || @sizes.find {|s| s[:label] == "Original"}
+
+.photo
+  %a.main{:href => flickr_url(@photo)}
+    %img{:src => photo_size[:source], :width => photo_size[:width], :height => photo_size[:height], :alt => @photo[:title]}/
+
+  %h1
+    %a{:href => flickr_url(@photo)}= (@photo/:title).text.strip
+
+  .description
+    - description_paras = (@photo/:description).text.strip.split("\n\n")
+    - for para in description_paras
+      %p= para
+
+  %p.comments
+    %a{:href => flickr_url(@photo) + "#DiscussPhoto", :title => "Read and leave comments on Flickr" }
+      = pluralize((@photo/:comments).text, "comment")
+
+  %p.tags
+    Tags:
+    = (@photo/:tag).map {|t| %(<a rel="tag" href="http://www.flickr.com/photos/toolmantim/tags/#{t.html}" title="Other flickr photos tagged with '#{t[:raw]}'">#{t[:raw]}</a>) }.join(", ")
+
+  .more-photos
+    %ul
+      - if @prev_photo
+        %li.prev
+          %a{:href => photo_path(@prev_photo), :title => @prev_photo[:title]}= flickr_square(@prev_photo)
+      %li.current
+        %span= flickr_square(@photo)
+      - if @next_photo
+        %li.next
+          %a{:href => photo_path(@next_photo), :title => @next_photo[:title]}= flickr_square(@next_photo)
